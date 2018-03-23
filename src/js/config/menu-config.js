@@ -6,47 +6,47 @@ const menuConfig = [{
     {
         title: '资源管理',
         icon: 'h-icon-menu',
-        key: 'blog',
+        key: 'res',
         children: [{
                 title: '新增链接',
                 icon: 'h-icon-message',
-                key: 'basic'
+                key: 'newres'
             },
             {
                 title: '失效链接',
                 icon: 'h-icon-complete',
-                key: 'statistic'
+                key: 'badres'
             },
             {
                 title: '链接管理',
                 icon: 'h-icon-complete',
-                key: 'statistic'
+                key: 'resources'
             }
         ]
     },
     {
         title: '内容管理',
         icon: 'h-icon-calendar',
-        key: 'article',
+        key: 'content',
         children: [{
                 title: '最新文章',
                 icon: 'h-icon-edit',
-                key: 'new'
+                key: 'newcontent'
             },
             {
                 title: '推送管理',
                 icon: 'h-icon-link',
-                key: 'history'
+                key: 'pushcontent'
             },
             {
                 title: '历史内容',
                 icon: 'h-icon-message',
-                key: 'commont'
+                key: 'historycontent'
             },
             {
                 title: '标签管理',
                 icon: 'h-icon-star-on',
-                key: 'kinds'
+                key: 'tags'
             }
         ]
     }

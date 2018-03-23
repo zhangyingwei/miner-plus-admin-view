@@ -12,42 +12,34 @@ const initRouter = () => {
             name: 'login',
             component: (resolve) => require(['components/login'], resolve)
         }, {
-            path: '/admin/form',
-            name: 'form',
-            component: (resolve) => require(['components/demo-modules/form'], resolve)
+            path: '/admin/res/new',
+            name: 'newres',
+            component: (resolve) => require(['components/miner/resources/newlink'], resolve)
         }, {
-            path: '/admin/basic',
-            name: 'basic',
-            component: (resolve) => require(['components/treehole/basic'], resolve)
-        }, {
-            path: '/admin/statistic',
-            name: 'statistic',
-            component: (resolve) => require(['components/treehole/statistic'], resolve)
-        }, {
-            path: '/admin/settings',
-            name: 'settings',
-            component: (resolve) => require(['components/treehole/settings'], resolve)
-        }, {
-            path: '/admin/article/new',
-            name: 'new',
-            component: (resolve) => require(['components/treehole/article/new'], resolve)
-        }, {
-            path: '/admin/article/history',
-            name: 'history',
-            component: (resolve) => require(['components/treehole/article/history'], resolve)
-        }, {
-            path: '/admin/article/commont',
-            name: 'commont',
-            component: (resolve) => require(['components/treehole/article/commont'], resolve)
-        }, {
-            path: '/admin/article/kinds',
-            name: 'kinds',
-            component: (resolve) => require(['components/treehole/article/kinds'], resolve)
+            path: '/admin/res/bad',
+            name: 'badres',
+            component: (resolve) => require(['components/miner/resources/badlink'], resolve)
         }, {
             path: '/admin/resources',
             name: 'resources',
-            component: (resolve) => require(['components/treehole/resources/resources'], resolve)
-        }]
+            component: (resolve) => require(['components/miner/resources/links'], resolve)
+        }, {
+            path: '/admin/content/new',
+            name: 'newcontent',
+            component: (resolve) => require(['components/miner/content/new'], resolve)
+        }, {
+            path: '/admin/content/push',
+            name: 'pushcontent',
+            component: (resolve) => require(['components/miner/content/push'], resolve)
+        }, {
+            path: '/admin/content/history',
+            name: 'historycontent',
+            component: (resolve) => require(['components/miner/content/push'], resolve)
+        }, {
+            path: '/admin/content/tags',
+            name: 'tags',
+            component: (resolve) => require(['components/miner/content/tags'], resolve)
+        }, ]
     };
 
     let router = new VueRouter(routerParam);
