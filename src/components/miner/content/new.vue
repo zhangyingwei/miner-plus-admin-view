@@ -15,14 +15,11 @@
                             <span class="text-hover">{{props.data.author}}</span>
                         </template>
                     </TableItem>
-                    <TableItem title="站点名称" :width="120" >
+                    <TableItem title="站点名称" :width="100" >
                         <template slot-scope="props">
-                            <span class="text-hover">{{props.data.sitename}}</span>
-                        </template>
-                    </TableItem>
-                    <TableItem title="资源站地址" :width="120">
-                        <template slot-scope="props">
-                            <span>{{props.data.site}}</span>
+                            <a :href="props.data.site" target="_blank">
+                                <span class="text-hover">{{props.data.sitename}}</span>
+                            </a>
                         </template>
                     </TableItem>
                     <TableItem title="文章标题" :width="120">
@@ -39,17 +36,6 @@
                                 <span v-if="props.data.comment && props.data.description.length>20" class="text-hover desc-text">{{props.data.description.substr(0,20)}}...</span>
                                 <div slot="content">
                                     {{props.data.description}}
-                                </div>
-                            </Tooltip>
-                        </template>
-                    </TableItem>
-                    <TableItem title="简评" :width="100">
-                        <template slot-scope="props">
-                            <Tooltip theme="white" placement="right">
-                                <span v-if="props.data.comment && props.data.comment.length<=20" class="text-hover desc-text">{{props.data.comment}}</span>
-                                <span v-if="props.data.comment && props.data.comment.length>20" class="text-hover desc-text">{{props.data.comment.substr(0,20)}}...</span>
-                                <div slot="content">
-                                    {{props.data.comment}}
                                 </div>
                             </Tooltip>
                         </template>
@@ -81,12 +67,12 @@
                     </TableItem>
                     <TableItem title="操作" :width="150" >
                         <template slot-scope="props">
-                            <button class="h-btn h-btn-s h-btn-green">
-                                通过
+                            <button class="h-btn h-btn-s h-btn-green" @click="ok(props.data)" >
+                                好
                                 <i class="h-icon-edit"></i>
                             </button>
                             <button class="h-btn h-btn-s h-btn-red" >
-                                驳回
+                                垃圾
                                 <i class="h-icon-trash"></i>
                             </button>
                         </template>
@@ -97,6 +83,22 @@
                     <Pagination :cur="page.current" :size="page.size" :total="page.total" @change="currentChange" :small="true"></Pagination>
                 </div>
             </div>
+        </div>
+        <div>
+            <Modal v-model="modal.opened">
+                <div slot="header">文章审核</div>
+                <div >
+                    <Form :label-width="90" :model="modal">
+                      <FormItem label="标题">
+                        <input type="text" v-width="600" disabled v-model="modal.title" />
+                      </FormItem>
+                      <FormItem label="简评">
+                        <textarea placeholder="请输入简评..." v-height="200" v-model="modal.comment"></textarea>
+                      </FormItem>
+                    </Form>
+                </div>
+                <div slot="footer"><button class="h-btn" @click="cancel">取消</button><button class="h-btn h-btn-primary" @click="okContent" >确定</button></div>
+            </Modal>
         </div>
     </div>
 </template>
@@ -133,10 +135,11 @@ export default {
             total: 0,
             size: 10
         },
-        confirm:{
-            open: false,
-            itemid: null,
-            itemtitle: null
+        modal: {
+            opened: false,
+            id: "",
+            title: "",
+            comment: ""
         }
     }
   },
@@ -163,6 +166,23 @@ export default {
         this.page.size = value.size
         this.search()
     },
+    ok(line){
+        this.modal.opened = true
+        this.modal.title = line.title
+        this.modal.id = line.id
+    },
+    cancel(){
+        this.modal.opened = false
+    },
+    okContent(){
+        console.log(this.modal)
+        this.modal.opened = false
+    },
+    clearModal(){
+        this.modal.title = ""
+        this.modal.id = ""
+        this.modal.comment = ""
+    }
   },
   mounted: function(){
       this.token = Utils.getLocal("token")
