@@ -96,11 +96,6 @@
                 <div v-padding="10">
                     <Pagination :cur="page.current" :size="page.size" :total="page.total" @change="currentChange" :small="true"></Pagination>
                 </div>
-                <Modal v-model="confirm.open">
-                    <div slot="header">提示</div>
-                    <div >确定要删除 {{confirm.itemtitle}} ({{confirm.itemid}}) 吗</div>
-                    <div slot="footer"><button class="h-btn" @click="confirm.open = false">取消</button><button class="h-btn h-btn-primary">确定</button></div>
-                </Modal>
             </div>
         </div>
     </div>
