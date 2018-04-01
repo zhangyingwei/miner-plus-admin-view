@@ -60,14 +60,231 @@
                             <FormItem label="IP 归属地" class="dark1-color">{{detailinfo.sarea}}</FormItem>
                             <FormItem>
                                 <br/>
-                                <Button class="h-btn h-btn-green" :loading="true">通过</Button>
+                                <Button class="h-btn h-btn-green" @click="passmodel" >通过</Button>
                                 <Button class="h-btn h-btn-primary">暂存</Button>
                                 <Button class="h-btn h-btn-red" >删除</Button>
                             </FormItem>
                         </Form>
+                        <div v-if="!detailinfo.resources" class="primary-color text-center" v-padding="30" >
+                            暂无数据
+                        </div>
                     </div>
                 </Col>
             </Row>
+        </div>
+        <div>
+            <Modal v-model="pass.opened">
+                <div slot="header">配置规则</div>
+                <div v-width="600">
+                    <Form :label-width="90" :width="300" labelPosition="right" :model="detailinfo" >
+                        <FormItemList>
+                            <FormItem label="地址">
+                                <input type="text" readonly v-model="detailinfo.resources" />
+                            </FormItem>
+                            <FormItem>
+                                <!-- title -->
+                                <div class="h-panel">
+                                    <div class="h-panel-bar">
+                                        <span class="h-panel-title">规则配置[ 标题 ]</span>
+                                        <div class="h-panel-right">
+                                            <Button color="blue" size="s" @click="addrule('title')" ><i class="h-icon-plus"></i>添加规则</Button>
+                                            <Button color="red" size="s" @click="testRule('title')" >测试</Button>
+                                        </div>
+                                    </div>
+                                    <div class="h-panel-body" >
+                                        <div>
+                                            <Row>
+                                                <Col width="9" v-padding="2">
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
+                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="9" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
+                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="6" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
+                                                        <input type="text" placeholder="取值属性" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-for="(rule,index) in pass.titleRules" >
+                                            <Row>
+                                                <Col width="22" v-padding="2">
+                                                    <input type="text" placeholder="请输入规则..." v-model="rule.rule" />
+                                                </Col>
+                                                <Col width="2" >
+                                                    <Button icon="h-icon-trash" @click="removeRule(index,'title')" text-color="red" :no-border="true" ></Button>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-if="pass.titleRules.length <= 0" v-padding="2">
+                                            <span class="primary-color text-center" >暂无规则</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <br/>
+                                <!-- url -->
+                                <div class="h-panel">
+                                    <div class="h-panel-bar">
+                                        <span class="h-panel-title">规则配置 [ 地址 ] </span>
+                                        <div class="h-panel-right">
+                                            <Button color="blue" size="s" @click="addrule('url')" ><i class="h-icon-plus"></i>添加规则</Button>
+                                            <Button color="red" size="s" @click="testRule('url')" >测试</Button>
+                                        </div>
+                                    </div>
+                                    <div class="h-panel-body" >
+                                        <div>
+                                            <Row>
+                                                <Col width="9" v-padding="2">
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
+                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="9" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
+                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="6" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
+                                                        <input type="text" placeholder="取值属性" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-for="(rule,index) in pass.urlRules" >
+                                            <Row>
+                                                <Col width="22" v-padding="2" >
+                                                    <input type="text" placeholder="请输入规则..." v-model="rule.rule" />
+                                                </Col>
+                                                <Col width="2" >
+                                                    <Button icon="h-icon-trash" @click="removeRule(index,'url')" text-color="red" :no-border="true" ></Button>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-if="pass.urlRules.length <= 0" v-padding="2">
+                                            <span class="primary-color text-center" >暂无规则</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br/>
+                                <!-- description -->
+                                <div class="h-panel">
+                                    <div class="h-panel-bar">
+                                        <span class="h-panel-title">规则配置 [ 简介 ] </span>
+                                        <div class="h-panel-right">
+                                            <Button color="blue" size="s" @click="addrule('desc')" ><i class="h-icon-plus"></i>添加规则</Button>
+                                            <Button color="red" size="s" @click="testRule('desc')" >测试</Button>
+                                        </div>
+                                    </div>
+                                    <div class="h-panel-body" >
+                                        <div>
+                                            <Row>
+                                                <Col width="9" v-padding="2">
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
+                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="9" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
+                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="6" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
+                                                        <input type="text" placeholder="取值属性" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-for="(rule,index) in pass.descRules" >
+                                            <Row>
+                                                <Col width="22" v-padding="2" >
+                                                    <input type="text" placeholder="请输入规则..." v-model="rule.rule" />
+                                                </Col>
+                                                <Col width="2" >
+                                                    <Button icon="h-icon-trash" @click="removeRule(index,'desc')" text-color="red" :no-border="true" ></Button>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-if="pass.descRules.length <= 0" v-padding="2">
+                                            <span class="primary-color text-center" >暂无规则</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br/>
+                                <!-- pubdate -->
+                                <div class="h-panel">
+                                    <div class="h-panel-bar">
+                                        <span class="h-panel-title">规则配置 [ 发布时间 ] </span>
+                                        <div class="h-panel-right">
+                                            <Button color="blue" size="s" @click="addrule('pubdate')" ><i class="h-icon-plus"></i>添加规则</Button>
+                                            <Button color="red" size="s" @click="testRule('pubdate')" >测试</Button>
+                                        </div>
+                                    </div>
+                                    <div class="h-panel-body" >
+                                        <div>
+                                            <Row>
+                                                <Col width="9" v-padding="2">
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
+                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="9" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
+                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                    </div>
+                                                </Col>
+                                                <Col width="6" v-padding="2" >
+                                                    <div class="h-input-group">
+                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
+                                                        <input type="text" placeholder="取值属性" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-for="(rule,index) in pass.pubdateRules" >
+                                            <Row>
+                                                <Col width="22" v-padding="2" >
+                                                    <input type="text" placeholder="请输入规则..." v-model="rule.rule" />
+                                                </Col>
+                                                <Col width="2" >
+                                                    <Button icon="h-icon-trash" @click="removeRule(index,'pubdate')" text-color="red" :no-border="true" ></Button>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <div v-if="pass.pubdateRules.length <= 0" v-padding="2">
+                                            <span class="primary-color text-center" >暂无规则</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </FormItem>
+                        </FormItemList>
+                    </Form>
+                </div>
+                <div slot="footer">
+                    <button class="h-btn" >取消</button>
+                    <button class="h-btn h-btn-primary" >确定</button>
+                </div>
+            </Modal>
         </div>
     </div>
 </template>
@@ -106,9 +323,16 @@ export default {
             size: 10
         },
         confirm:{
-            open: false,
+            opened: false,
             itemid: null,
             itemtitle: null
+        },
+        pass: {
+            opened: false,
+            titleRules: [],
+            urlRules: [],
+            descRules: [],
+            pubdateRules: []
         }
     }
   },
@@ -139,6 +363,48 @@ export default {
     },
     showdetail(line){
         this.detailinfo = line;
+    },
+    passmodel(){
+        this.pass.opened = true
+    },
+    addrule(type){
+        if (type) {
+            if (type === "title") {
+                this.pass.titleRules.push({
+                    rule: ""
+                })
+            }else if (type === "url") {
+                this.pass.urlRules.push({
+                    rule: ""
+                })
+            }else if(type === "desc"){
+                this.pass.descRules.push({
+                    rule: ""
+                })
+            }else if (type === "pubdate") {
+                this.pass.pubdateRules.push({
+                    rule: ""
+                })
+            }
+        }
+    },
+    removeRule(index,type){
+        if (type) {
+            if (type === "title") {
+                this.pass.titleRules.splice(index, 1)
+            }else if (type === "url") {
+                this.pass.urlRules.splice(index, 1)
+            }else if(type === "desc"){
+                this.pass.descRules.splice(index, 1)
+            }else if (type === "pubdate") {
+                this.pass.pubdateRules.splice(index, 1)
+            }
+        }
+    },
+    testRule(type){
+        if (type) {
+            this.$Message.error(type)
+        }
     }
   },
   mounted: function(){
