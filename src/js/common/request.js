@@ -6,6 +6,14 @@ const Request = {
             return Ajax.get(`/dicts`);
         },
     },
+    Resources: {
+        listNews(params) {
+            return Ajax.get("/resources/new",params)
+        },
+        testRule(param){
+            return Ajax.post("/rules/test",param)
+        }
+    },
     Home: {
         articleCount() {
             return Ajax.get("/articles/count")
@@ -72,17 +80,6 @@ const Request = {
         },
         deleteOneKind(param) {
             return Ajax.delete("/kinds/" + param)
-        }
-    },
-    Resources: {
-        search(param) {
-            return Ajax.get("/resources", param)
-        },
-        deleteOne(param) {
-            return Ajax.delete("/resources/" + param)
-        },
-        upload() {
-            return
         }
     },
     Demo: {

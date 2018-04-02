@@ -2,7 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 let ajax = {
-    PREFIX: "/admin",
+    PREFIX: "/api",
     HEADER: Utils.getAuthor() || "heyui",
     header_Content_Type: "",
     requestingApi: new Set(),

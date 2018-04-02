@@ -5,7 +5,7 @@
                 新增链接
             </div>
             <div class="h-panel-bar" v-padding="10">
-                head
+                新提交连接
             </div>
             <Row :space="9">
                 <Col width="14" >
@@ -40,6 +40,7 @@
                             <div >确定要删除 {{confirm.itemtitle}} ({{confirm.itemid}}) 吗</div>
                             <div slot="footer"><button class="h-btn" @click="confirm.open = false">取消</button><button class="h-btn h-btn-primary">确定</button></div>
                         </Modal>
+                        <Loading text="数据加载中..." :loading="loading"></Loading>
                     </div>
                 </Col>
                 <Col width="10" >
@@ -52,9 +53,9 @@
                             <FormItem label="地址">
                                 <a :href="detailinfo.resources" target="_blank" class="primary-color"> {{detailinfo.resources}} </a>
                             </FormItem>
-                            <FormItem label="资源类型">
+                            <!-- <FormItem label="资源类型">
                                 <span class="h-tag h-tag-blue">{{detailinfo.rgroup}}</span>
-                            </FormItem>
+                            </FormItem> -->
                             <FormItem label="提交时间"><i class="h-icon-calendar"> {{detailinfo.createdate}}</i></FormItem>
                             <FormItem label="来源 IP">{{detailinfo.sip}}</FormItem>
                             <FormItem label="IP 归属地" class="dark1-color">{{detailinfo.sarea}}</FormItem>
@@ -79,7 +80,14 @@
                     <Form :label-width="90" :width="300" labelPosition="right" :model="detailinfo" >
                         <FormItemList>
                             <FormItem label="地址">
-                                <input type="text" readonly v-model="detailinfo.resources" />
+                                <Row>
+                                    <Col width="18" v-padding="2" >
+                                        <input type="text" readonly v-model="detailinfo.resources" />
+                                    </Col>
+                                    <Col width="6" v-padding="2" >
+                                        <Select v-model="pass.select" :datas="pass.param"  :null-option="false"></Select>
+                                    </Col>
+                                </Row>
                             </FormItem>
                             <FormItem>
                                 <!-- title -->
@@ -96,20 +104,20 @@
                                             <Row>
                                                 <Col width="9" v-padding="2">
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
-                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                        <span class="h-input-addon">前缀</span>
+                                                        <input type="text"  v-model="pass.rules.title.prefix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="9" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
-                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                        <span class="h-input-addon">后缀</span>
+                                                        <input type="text" v-model="pass.rules.title.suffix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="6" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
-                                                        <input type="text" placeholder="取值属性" />
+                                                        <span class="h-input-addon">属性</span>
+                                                        <input type="text" v-model="pass.rules.title.attr" />
                                                     </div>
                                                 </Col>
                                             </Row>
@@ -145,20 +153,20 @@
                                             <Row>
                                                 <Col width="9" v-padding="2">
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
-                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                        <span class="h-input-addon">前缀</span>
+                                                        <input type="text"  v-model="pass.rules.url.prefix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="9" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
-                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                        <span class="h-input-addon">后缀</span>
+                                                        <input type="text" v-model="pass.rules.url.suffix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="6" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
-                                                        <input type="text" placeholder="取值属性" />
+                                                        <span class="h-input-addon">属性</span>
+                                                        <input type="text" v-model="pass.rules.url.attr" />
                                                     </div>
                                                 </Col>
                                             </Row>
@@ -194,20 +202,20 @@
                                             <Row>
                                                 <Col width="9" v-padding="2">
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
-                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                        <span class="h-input-addon">前缀</span>
+                                                        <input type="text" v-model="pass.rules.desc.prefix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="9" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
-                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                        <span class="h-input-addon">后缀</span>
+                                                        <input type="text" v-model="pass.rules.desc.suffix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="6" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
-                                                        <input type="text" placeholder="取值属性" />
+                                                        <span class="h-input-addon">属性</span>
+                                                        <input type="text" v-model="pass.rules.desc.attr" />
                                                     </div>
                                                 </Col>
                                             </Row>
@@ -243,20 +251,20 @@
                                             <Row>
                                                 <Col width="9" v-padding="2">
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">前缀</span>
-                                                        <input type="text" placeholder="请输入前缀，如果有的话..." />
+                                                        <span class="h-input-addon">前缀</span>
+                                                        <input type="text" v-model="pass.rules.pubdate.prefix"  />
                                                     </div>
                                                 </Col>
                                                 <Col width="9" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">后缀</span>
-                                                        <input type="text" placeholder="请输入后缀，如果有的话..." />
+                                                        <span class="h-input-addon">后缀</span>
+                                                        <input type="text" v-model="pass.rules.pubdate.suffix" />
                                                     </div>
                                                 </Col>
                                                 <Col width="6" v-padding="2" >
                                                     <div class="h-input-group">
-                                                        <span class="bg-blue-color white-color h-input-addon">属性</span>
-                                                        <input type="text" placeholder="取值属性" />
+                                                        <span class="h-input-addon">属性</span>
+                                                        <input type="text" v-model="pass.rules.pubdate.attr" />
                                                     </div>
                                                 </Col>
                                             </Row>
@@ -295,6 +303,7 @@ import store from 'js/vuex/store';
 export default {
   data() {
     return {
+        loading: false,
         token: "",
         toolbar: {
             title: null,
@@ -329,29 +338,51 @@ export default {
         },
         pass: {
             opened: false,
+            rules: {
+                title: {
+                    prefix: "",
+                    suffix: "",
+                    attr: ""
+                },
+                url: {
+                    prefix: "",
+                    suffix: "",
+                    attr: ""
+                },
+                desc: {
+                    prefix: "",
+                    suffix: "",
+                    attr: ""
+                },
+                pubdate: {
+                    prefix: "",
+                    suffix: "",
+                    attr: ""
+                },
+            },
             titleRules: [],
             urlRules: [],
             descRules: [],
-            pubdateRules: []
+            pubdateRules: [],
+            select: "site",
+            param: ["rss","site"]
+
         }
     }
   },
   methods: {
     search(){
-        console.log(this.toolbar)
-        for (let index = 0; index < 10; index++) {
-            this.datas.push({
-                id:index,
-                resources: "http://dajiahoa.com",
-                rgroup: "rss",
-                rtype: "java",
-                createdate: "2010-01-01 00:00:00",
-                updatedate: "2010-01-02 00:00:00",
-                flag: 1,
-                sip: "172.0.0.1",
-                sarea: "中国,北京"
-            })
-        }
+        this.loading = true;
+        R.Resources.listNews({
+            current: this.page.current,
+            pageSize: this.page.size
+        }).then(res => {
+            if (res.ok) {
+                this.datas = res.result.data
+                this.page.total = res.result.page.total
+            }
+            this.loading = false;
+        })
     },
     currentChange(value){
         this.page.current = value.cur
@@ -366,6 +397,10 @@ export default {
     },
     passmodel(){
         this.pass.opened = true
+        this.pass.titleRules = []
+        this.pass.urlRules = []
+        this.pass.descRules = []
+        this.pass.pubdateRules = []
     },
     addrule(type){
         if (type) {
@@ -403,7 +438,61 @@ export default {
     },
     testRule(type){
         if (type) {
-            this.$Message.error(type)
+            var res = this.detailinfo.resources
+            var rule = ""
+            var prefix = ""
+            var suffix = ""
+            var attr = ""
+            if (type === "title") {
+                rule = this.pass.titleRules.map(item => item.rule).join("@")
+                prefix = this.pass.rules.title.prefix
+                suffix = this.pass.rules.title.suffix
+                attr = this.pass.rules.title.attr
+            }else if (type === "url") {
+                rule = this.pass.urlRules.map(item => item.rule).join("@")
+                prefix = this.pass.rules.url.prefix
+                suffix = this.pass.rules.url.suffix
+                attr = this.pass.rules.url.attr
+            }else if(type === "desc"){
+                rule = this.pass.descRules.map(item => item.rule).join("@")
+                prefix = this.pass.rules.desc.prefix
+                suffix = this.pass.rules.desc.suffix
+                attr = this.pass.rules.desc.attr
+            }else if (type === "pubdate") {
+                rule = this.pass.pubdateRules.map(item => item.rule).join("@")
+                prefix = this.pass.rules.pubdate.prefix
+                suffix = this.pass.rules.pubdate.suffix
+                attr = this.pass.rules.pubdate.attr
+            }
+
+            this.$LoadingBar.start();
+            R.Resources.testRule({
+                url: res,
+                rule: rule,
+                prefix: prefix,
+                suffix: suffix,
+                attr: attr
+            }).then(res => {
+                if (res.ok) {
+                    const datas = res.result
+                    console.log(datas)
+                    const resList = datas.filter(line => {
+                        return line && line.length > 0
+                    }).map(line => {
+                        return "<blockquote v-padding='5' class='bottom-line'>"+line+"</blockquote>"
+                    })
+                    console.log(resList)
+                    console.log(resList.join(""))
+                    this.$Modal({
+                        title: '内容',
+                        content: resList.join("")
+                    });
+                    this.$LoadingBar.success();
+                }else{
+                    this.$LoadingBar.fail();
+                }
+            })
+
         }
     }
   },
