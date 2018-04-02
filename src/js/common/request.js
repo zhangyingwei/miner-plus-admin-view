@@ -12,6 +12,12 @@ const Request = {
         },
         testRule(param){
             return Ajax.post("/rules/test",param)
+        },
+        deleteResources(param){
+            return Ajax.delete("/resources/"+param)
+        },
+        publishResources(param){
+            return Ajax.post("/rules",param)
         }
     },
     Home: {

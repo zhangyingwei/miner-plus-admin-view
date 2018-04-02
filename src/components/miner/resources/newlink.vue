@@ -62,8 +62,7 @@
                             <FormItem>
                                 <br/>
                                 <Button class="h-btn h-btn-green" @click="passmodel" >通过</Button>
-                                <Button class="h-btn h-btn-primary">暂存</Button>
-                                <Button class="h-btn h-btn-red" >删除</Button>
+                                <Button class="h-btn h-btn-red" @click="remove(detailinfo.id)" >删除</Button>
                             </FormItem>
                         </Form>
                         <div v-if="!detailinfo.resources" class="primary-color text-center" v-padding="30" >
@@ -289,9 +288,10 @@
                     </Form>
                 </div>
                 <div slot="footer">
-                    <button class="h-btn" >取消</button>
-                    <button class="h-btn h-btn-primary" >确定</button>
+                    <button class="h-btn" @click="cancelpass" >取消</button>
+                    <button class="h-btn h-btn-primary" @click="submitpass" >确定</button>
                 </div>
+                <Loading text="数据加载中..." :loading="pass.loading"></Loading>
             </Modal>
         </div>
     </div>
@@ -337,6 +337,7 @@ export default {
             itemtitle: null
         },
         pass: {
+            loading: false,
             opened: false,
             rules: {
                 title: {
@@ -494,6 +495,54 @@ export default {
             })
 
         }
+    },
+    remove(id){
+        this.$LoadingBar.start()
+        R.Resources.deleteResources(id).then(res => {
+            if (res.ok) {
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.search()
+            this.detailinfo = {}
+        })
+    },
+    cancelpass(){
+        this.pass.opened = false
+    },
+    submitpass(){
+        this.pass.loading = true
+        var title = this.pass.rules.title
+        title.rule = this.pass.titleRules.map(item => item.rule).join("@")
+        var url = this.pass.rules.url
+        url.rule = this.pass.urlRules.map(item => item.rule).join("@")
+        var desc = this.pass.rules.desc
+        desc.rules = this.pass.descRules.map(item => item.rule).join("@")
+        var pubdate = this.pass.rules.pubdate
+        pubdate.rule = this.pass.pubdateRules.map(item => item.rule).join("@")
+        
+        var result = {}
+        if (title.rule) {
+            result.title = title
+        }
+        if (url.rule) {
+            result.url = url
+        }
+        if (desc.rule) {
+            result.desc = desc
+        }
+        if (pubdate.rule) {
+            result.pubdate = pubdate
+        }
+        result.id = this.detailinfo.resources;
+        console.log(result)
+        R.Resources.publishResources(result).then(res => {
+            if (res.ok) {
+
+            }
+            this.pass.loading = false
+        })
     }
   },
   mounted: function(){
