@@ -12,16 +12,20 @@
                     <TableItem title="序号" :width="60" prop="id" ></TableItem>
                     <TableItem title="地址" :width="250" >
                         <template slot-scope="props">
-                            <span class="text-hover">{{props.data.resources}}</span>
+                            <a :href="props.data.resources" target="_blank">
+                                <span class="text-hover">{{props.data.resources}}</span>
+                            </a>
                         </template>
                     </TableItem>
                     <TableItem title="资源分组" :width="100">
                         <template slot-scope="props">
+                            <span v-if="props.data.rgroup"  class="h-tag h-tag-circle h-tag-bg-red"> </span>
                             <span>{{props.data.rgroup}}</span>
                         </template>
                     </TableItem>
                     <TableItem title="类别" :width="100">
                         <template slot-scope="props">
+                            <span v-if="props.data.rtype" class="h-tag h-tag-circle h-tag-bg-green"></span>
                             <span>{{props.data.rtype}}</span>
                         </template>
                     </TableItem>
@@ -131,16 +135,19 @@ export default {
   },
   methods: {
     search(){
-        console.log(this.toolbar)
-        this.datas.push({
-            id:1,
-            resources: "http://dajiahoa.com",
-            rgroup: "rss",
-            rtype: "java",
-            rtypeid: 1,
-            createdate: "2010-01-01 00:00:00",
-            updatedate: "2010-01-02 00:00:00",
-            flag: 1
+        this.$LoadingBar.start()
+        R.Resources.listResources({
+            current: this.page.current,
+            pageSize: this.page.size
+        }).then(res => {
+            if (res.ok) {
+                console.log(res)
+                this.datas = res.result.data
+                this.page.total = res.result.page.total
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
         })
     },
     currentChange(value){

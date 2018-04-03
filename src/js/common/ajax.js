@@ -87,7 +87,7 @@ let ajax = {
         }
         let header = {
             "author": this.HEADER,
-            "treehole-tocken": Utils.getLocal("token")
+            "miner-token": Utils.getLocal("miner-token")
         };
         let defaultParam = {
             headers: header,
@@ -114,13 +114,9 @@ let ajax = {
                 if (headers.from_url) {
                     window.top.location = headers.from_url
                 }
-                // console.log("data", data)
-                // if (status == 200) {
-                //     status = data.code;
-                // }
                 if (status != 200) {
-                    if (status == 401) {
-                        window.top.location = "/vue/admin/login";
+                    if (status == 501) {
+                        window.top.location = "/admin/login";
                         return;
                     }
                     if (status == 500) {
@@ -131,10 +127,10 @@ let ajax = {
                         HeyUI.$Message.error(data._msg || '请求异常');
                     }
                 }
-                if (data.code === 999) {
+                if (data.code === 501) {
                     console.log("请先登录")
                     HeyUI.$Message.error('请先登录');
-                    window.top.location = "/vue/admin/login";
+                    window.top.location = "/admin/login";
                 }
                 // data.ok = data.status == 200;
                 data.ok = status

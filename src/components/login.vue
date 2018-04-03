@@ -1,7 +1,7 @@
 <template>
   <div id="page-login">
     <div class="login-container">
-      <div class="login-title">TreeHole博客管理</div>
+      <div class="login-title">MinerPlud 管理端</div>
       <div class="login-name">
         <input type="text" v-model="login.username" placeholder="用户名"/>
       </div>
@@ -38,9 +38,9 @@ export default {
           if(resp.code === 200){
             this.$Message(resp.message)
             console.log(resp.result.data)
-            Utils.removeLocal("token")
+            Utils.removeLocal("miner-token")
             Utils.removeLocal("loginuser")
-            Utils.saveLocal("token", resp.result.data);
+            Utils.saveLocal("miner-token", resp.result);
             Utils.saveLocal("loginuser",self.login.username)
             this.$router.replace('/vue/admin');
           }else{

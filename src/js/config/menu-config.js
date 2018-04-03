@@ -38,11 +38,11 @@ const menuConfig = [{
                 icon: 'h-icon-link',
                 key: 'pushcontent'
             },
-            {
-                title: '历史内容',
-                icon: 'h-icon-message',
-                key: 'historycontent'
-            },
+            // {
+            //     title: '历史内容',
+            //     icon: 'h-icon-message',
+            //     key: 'historycontent'
+            // },
             {
                 title: '标签管理',
                 icon: 'h-icon-star-on',

@@ -5,7 +5,7 @@
                 标签管理
             </div>
             <div class="h-panel-bar" v-padding="10">
-                标签管理
+                <button class="h-btn h-btn-primary" @click="addTag">添加</button>
             </div>
             <div class="h-panel-body">
                 <Table :datas="datas">
@@ -23,7 +23,7 @@
                     </TableItem>
                     <TableItem title="操作" :width="90" >
                         <template slot-scope="props">
-                            <button class="h-btn h-btn-s h-btn-red" >
+                            <button class="h-btn h-btn-s h-btn-red" @click="remove(props.data)" >
                                 删除
                                 <i class="h-icon-trash"></i>
                             </button>
@@ -35,9 +35,11 @@
                     <Pagination :cur="page.current" :size="page.size" :total="page.total" @change="currentChange" :small="true"></Pagination>
                 </div>
                 <Modal v-model="confirm.open">
-                    <div slot="header">提示</div>
-                    <div >确定要删除 {{confirm.itemtitle}} ({{confirm.itemid}}) 吗</div>
-                    <div slot="footer"><button class="h-btn" @click="confirm.open = false">取消</button><button class="h-btn h-btn-primary">确定</button></div>
+                    <div slot="header">添加标签</div>
+                    <div >
+                        <input type="text" v-width="400" placeholder="请输入标签" v-model="confirm.tag"/>
+                    </div>
+                    <div slot="footer"><button class="h-btn" @click="confirm.open = false">取消</button><button class="h-btn h-btn-primary" @click="sureAddOne" >确定</button></div>
                 </Modal>
             </div>
         </div>
@@ -78,18 +80,30 @@ export default {
         },
         confirm:{
             open: false,
-            itemid: null,
-            itemtitle: null
+            tag: null
         }
     }
   },
   methods: {
     search(){
-        console.log(this.toolbar)
-        this.datas.push({
-            id: 0,
-            topic: "java",
-            flag: 0
+        // this.datas.push({
+        //     id: 0,
+        //     topic: "java",
+        //     flag: 0
+        // })
+
+        this.$LoadingBar.start()
+        R.Tags.listTags({
+            current: this.page.current,
+            pageSize: this.page.size
+        }).then(res => {
+            if (res.ok) {
+                this.datas = res.result.data
+                this.page.total = res.result.page.total
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
         })
     },
     currentChange(value){
@@ -97,6 +111,33 @@ export default {
         this.page.size = value.size
         this.search()
     },
+    addTag(){
+        this.confirm.open = true
+        this.confirm.tag = null
+    },
+    sureAddOne(){
+        R.Tags.addOne({
+            topic: this.confirm.tag
+        }).then(res => {
+            if (res.ok) {
+                this.$Message.success(res.message)
+                console.log(res)
+            }
+            this.confirm.open = false
+            this.search()
+        })
+    },
+    remove(line){
+        this.$LoadingBar.start()
+        R.Tags.deleteOne(line.topic).then(res => {
+            if (res.ok) {
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.search()
+        })
+    }
   },
   mounted: function(){
       this.token = Utils.getLocal("token")

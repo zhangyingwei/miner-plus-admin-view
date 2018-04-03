@@ -40,7 +40,7 @@
                             <span v-if="props.data.flag === 9" class="h-tag h-tag-bg-red">删除</span>
                         </template>
                     </TableItem>
-                    <TableItem title="操作" :width="100" >
+                    <TableItem title="操作" :width="120" >
                         <template slot-scope="props">
                             <button class="h-btn h-btn-s h-btn-green" @click="good(props.data)" >
                                 有效
@@ -100,24 +100,20 @@ export default {
   methods: {
     search(){
         console.log(this.toolbar)
-        this.datas.push({
-            id:1,
-            resources: "http://dajiahoa.com",
-            rgroup: "rss",
-            rtype: "java",
-            createdate: "2010-01-01 00:00:00",
-            updatedate: "2010-01-02 00:00:00",
-            flag: 2
+        this.$LoadingBar.start()
+        R.Resources.listBads({
+            current: this.page.current,
+            pageSize: this.page.size
+        }).then(res => {
+            if (res.ok) {
+                this.datas = res.result.data
+                this.page.total = res.result.page.total
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
         })
-        this.datas.push({
-            id:2,
-            resources: "http://dajiahoa.com",
-            rgroup: "rss",
-            rtype: "java",
-            createdate: "2010-01-01 00:00:00",
-            updatedate: "2010-01-02 00:00:00",
-            flag: 2
-        })
+
     },
     currentChange(value){
         this.page.current = value.cur
@@ -125,10 +121,26 @@ export default {
         this.search()
     },
     good(line){
-        this.$Message(`这是一个有效的地址${line.id}`)
+        this.$LoadingBar.start()
+        R.Resources.isGood(line.id).then(res => {
+            if (res.ok) {
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.search()
+        })
     },
     bad(line){
-        this.$Message(`这是一个无效的地址${line.id}`)
+        this.$LoadingBar.start()
+        R.Resources.isBad(line.id).then(res => {
+            if (res.ok) {
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.search()
+        })
     }
   },
   mounted: function(){

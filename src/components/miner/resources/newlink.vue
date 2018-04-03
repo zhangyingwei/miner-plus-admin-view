@@ -518,7 +518,7 @@ export default {
         var url = this.pass.rules.url
         url.rule = this.pass.urlRules.map(item => item.rule).join("@")
         var desc = this.pass.rules.desc
-        desc.rules = this.pass.descRules.map(item => item.rule).join("@")
+        desc.rule = this.pass.descRules.map(item => item.rule).join("@")
         var pubdate = this.pass.rules.pubdate
         pubdate.rule = this.pass.pubdateRules.map(item => item.rule).join("@")
         
@@ -536,12 +536,13 @@ export default {
             result.pubdate = pubdate
         }
         result.id = this.detailinfo.resources;
-        console.log(result)
+        result.uuid = this.detailinfo.id;
         R.Resources.publishResources(result).then(res => {
             if (res.ok) {
-
+                this.pass.opened = false
             }
             this.pass.loading = false
+            this.search()
         })
     }
   },

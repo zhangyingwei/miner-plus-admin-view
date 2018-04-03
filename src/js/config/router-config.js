@@ -4,7 +4,7 @@ const initRouter = () => {
     const routerParam = {
         mode: 'history',
         routes: [{
-            path: '/admin',
+            path: '/',
             name: 'home',
             component: (resolve) => require(['components/welcome/home'], resolve)
         }, {
@@ -53,13 +53,12 @@ const initRouter = () => {
         // }
         // console.log(to.path)
         var user = Utils.getLocal("loginuser")
-            // console.log("user", user)
-            // console.log(user === 'null')
-        if (user === 'null') {
-            if (to.path === "/vue/admin/login") {
+            console.log("user", user)
+        if (!user) {
+            if (to.path === "/admin/login") {
                 next()
             } else {
-                next('/vue/admin/login')
+                next('/admin/login')
             }
         }
         next();

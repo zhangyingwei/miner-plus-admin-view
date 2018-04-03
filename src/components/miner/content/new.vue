@@ -32,8 +32,8 @@
                     <TableItem title="简介" :width="120">
                         <template slot-scope="props">
                             <Tooltip theme="white" placement="right">
-                                <span v-if="props.data.comment && props.data.description.length<=20" class="text-hover desc-text">{{props.data.description}}</span>
-                                <span v-if="props.data.comment && props.data.description.length>20" class="text-hover desc-text">{{props.data.description.substr(0,20)}}...</span>
+                                <span v-if="props.data.description && props.data.description.length<=20" class="text-hover desc-text">{{props.data.description}}</span>
+                                <span v-if="props.data.description && props.data.description.length>20" class="text-hover desc-text">{{props.data.description.substr(0,20)}}...</span>
                                 <div slot="content">
                                     {{props.data.description}}
                                 </div>
@@ -48,11 +48,6 @@
                     <TableItem title="抓取时间" :width="120">
                         <template slot-scope="props">
                             <span>{{props.data.getdate}}</span>
-                        </template>
-                    </TableItem>
-                    <TableItem title="推送时间" :width="120">
-                        <template slot-scope="props">
-                            <span>{{props.data.pushdate}}</span>
                         </template>
                     </TableItem>
                     <TableItem title="状态" :width="100">
@@ -71,7 +66,7 @@
                                 好
                                 <i class="h-icon-edit"></i>
                             </button>
-                            <button class="h-btn h-btn-s h-btn-red" >
+                            <button class="h-btn h-btn-s h-btn-red" @click="laji(props.data)" >
                                 垃圾
                                 <i class="h-icon-trash"></i>
                             </button>
@@ -87,10 +82,17 @@
         <div>
             <Modal v-model="modal.opened">
                 <div slot="header">文章审核</div>
-                <div >
+                <div v-width="700">
                     <Form :label-width="90" :model="modal">
                       <FormItem label="标题">
-                        <input type="text" v-width="600" disabled v-model="modal.title" />
+                        <Row>
+                            <Col width="18">
+                                <input type="text" disabled v-model="modal.title" />
+                            </Col>
+                            <Col width="6">
+                                <Select v-model="modal.select" :datas="modal.param" placeholder="请选择文章分类"></Select>
+                            </Col>
+                        </Row>
                       </FormItem>
                       <FormItem label="简评">
                         <textarea placeholder="请输入简评..." v-height="200" v-model="modal.comment"></textarea>
@@ -98,6 +100,7 @@
                     </Form>
                 </div>
                 <div slot="footer"><button class="h-btn" @click="cancel">取消</button><button class="h-btn h-btn-primary" @click="okContent" >确定</button></div>
+                <Loading text="请耐心等待一下哈..." :loading="modal.loading"></Loading>
             </Modal>
         </div>
     </div>
@@ -139,26 +142,30 @@ export default {
             opened: false,
             id: "",
             title: "",
-            comment: ""
+            comment: "",
+            loading: false,
+            select: null,
+            param: [{ 
+                title: 'java', 
+                key: 0 
+            }]
         }
     }
   },
   methods: {
     search(){
-        console.log(this.toolbar)
-        this.datas.push({
-            id:0,
-            author: "zhangsan",
-            sitename: "小胡子哥的个人网站",
-            site: "http://www.barretlee.com/",
-            url: "http://www.barretlee.com/blog/2017/04/01/hsts-downgrade/",
-            title: "聊聊 HSTS 下的 HTTPS 降级问题",
-            description: "description",
-            comment: "这里是一些简评，主要是如果我看到文章有些意思的话，会写一些自己的见解，无关乎对错，无关乎立场",
-            pubdate: "2017-08-28 21:26:19",
-            getdate: "2017-08-28 21:26:19",
-            pushdate: "2017-08-28 21:26:19",
-            state: 4
+        this.$LoadingBar.start()
+        R.Content.listNews({
+            current: this.page.current,
+            pageSize: this.page.size
+        }).then(res => {
+            if (res.ok) {
+                this.datas = res.result.data
+                this.page.total = res.result.page.total
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
         })
     },
     currentChange(value){
@@ -170,13 +177,47 @@ export default {
         this.modal.opened = true
         this.modal.title = line.title
         this.modal.id = line.id
+        this.modal.comment = ""
+        this.modal.select = null
+
+        this.modal.loading = true
+        R.Content.listTopics().then(res => {
+            if (res.ok) {
+                this.modal.param = res.result
+            }
+            this.modal.loading = false
+        })
+    },
+    laji(line){
+        this.$LoadingBar.start()
+        R.Content.isRubbis(line.id).then(res => {
+            if (res.ok) {
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.search()
+        })
     },
     cancel(){
         this.modal.opened = false
     },
     okContent(){
-        console.log(this.modal)
-        this.modal.opened = false
+        if (!this.modal.select) {
+            this.$Message.error("请选择文章分类")
+            return
+        }
+        this.modal.loading = true
+        R.Content.readyToPush(this.modal).then(res => {
+            if (res.ok) {
+                this.$Message.success(res.message)
+            }else{
+                this.$Message.error("失败")
+            }
+            this.modal.loading = false
+            this.modal.opened = false
+            this.search()
+        })
     },
     clearModal(){
         this.modal.title = ""
