@@ -42,7 +42,7 @@ export default {
             Utils.removeLocal("loginuser")
             Utils.saveLocal("miner-token", resp.result);
             Utils.saveLocal("loginuser",self.login.username)
-            this.$router.replace('/vue/admin');
+            this.$router.replace('/');
           }else{
             this.$Message(resp.message)
           }

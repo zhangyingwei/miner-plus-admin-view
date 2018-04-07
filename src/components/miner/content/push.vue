@@ -5,7 +5,11 @@
                 待推送文章
             </div>
             <div class="h-panel-bar" v-padding="10">
-                下边的羔羊已经准备好被宰了
+                <span v-for="item in pushcount" v-padding="20">
+                    <Badge :count="item.count">
+                        <span v-bg-color:primary v-color:white v-padding="2" style="border-radius: 4px;">{{item.pushdate}}</span>
+                    </Badge>
+                </span>
             </div>
             <div class="h-panel-body">
                 <Table :datas="datas">
@@ -136,6 +140,7 @@ export default {
             }
         ],
         datas: [],
+        pushcount: [],
         kinds:{},
         page: {
             current: 1,
@@ -165,7 +170,6 @@ export default {
   },
   methods: {
     search(){
-        console.log(this.toolbar)
         // this.datas.push({
         //     id:0,
         //     author: "zhangsan",
@@ -190,7 +194,7 @@ export default {
                 this.datas = res.result.data.map(line => {
                     if (line.pushdate) {
                         if (line.pushdate.startWith(this.getNowFormatDate())) {
-                            line.pushdate = "今天"
+                            line.pushdate = line.pushdate + "[今天]"
                         }
                     }
                     return line;
@@ -199,6 +203,37 @@ export default {
                 this.$LoadingBar.success()
             }else{
                 this.$LoadingBar.fail()
+            }
+        })
+        this.listPushCount()
+    },
+    listPushCount(){
+        R.Content.listPushCounts().then(res => {
+            if (res.ok) {
+                if (res.result) {
+                    this.pushcount = res.result.map(line => {
+                        var result = {}
+                        if (line.pushdate) {
+                            result = {
+                                pushdate: line.pushdate.split(" ")[0],
+                                count: line.count
+                            }
+                        }else{
+                            result = {
+                                count: line.count,
+                                pushdate: '未分配'       
+                            }
+                        }
+                        return result
+                    }).map(line => {
+                        if (line.pushdate.startWith(this.getNowFormatDate())) {
+                            line.pushdate = line.pushdate + "[今天]"
+                        }
+                        return line
+                    })
+                }
+            }else{
+                
             }
         })
     },

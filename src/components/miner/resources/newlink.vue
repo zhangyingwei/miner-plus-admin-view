@@ -88,7 +88,7 @@
                                     </Col>
                                 </Row>
                             </FormItem>
-                            <FormItem>
+                            <FormItem v-if="pass.select == 'site'" >
                                 <!-- title -->
                                 <div class="h-panel">
                                     <div class="h-panel-bar">
@@ -485,7 +485,7 @@ export default {
                     console.log(resList)
                     console.log(resList.join(""))
                     this.$Modal({
-                        title: '内容',
+                        title: '内容[ '+resList.length+' ]',
                         content: resList.join("")
                     });
                     this.$LoadingBar.success();
@@ -537,11 +537,13 @@ export default {
         }
         result.id = this.detailinfo.resources;
         result.uuid = this.detailinfo.id;
+        result.type = this.pass.select
         R.Resources.publishResources(result).then(res => {
             if (res.ok) {
                 this.pass.opened = false
             }
             this.pass.loading = false
+            this.detailinfo = {}
             this.search()
         })
     }

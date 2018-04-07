@@ -30,6 +30,9 @@ const Request = {
         },
         listResources(param){
             return Ajax.get("/resources",param)
+        },
+        updateResources(param){
+            return Ajax.post("/resources/update/"+param.id,param)
         }
     },
     Content: {
@@ -50,6 +53,12 @@ const Request = {
         },
         listTopics(param){
             return Ajax.get("/topics/active",param)
+        },
+        getYesterdayNew(param){
+            return Ajax.get("/contents/news/yesterday",param)
+        },
+        listPushCounts(param){
+            return Ajax.get("/contents/push/count",param)
         }
     },
     Tags: {

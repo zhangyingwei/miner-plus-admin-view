@@ -23,12 +23,12 @@
                             <span>{{props.data.rgroup}}</span>
                         </template>
                     </TableItem>
-                    <TableItem title="类别" :width="100">
+                    <!-- <TableItem title="类别" :width="100">
                         <template slot-scope="props">
                             <span v-if="props.data.rtype" class="h-tag h-tag-circle h-tag-bg-green"></span>
                             <span>{{props.data.rtype}}</span>
                         </template>
-                    </TableItem>
+                    </TableItem> -->
                     <TableItem title="提交时间" :width="120">
                         <template slot-scope="props">
                             <span>{{props.data.createdate}}</span>
@@ -47,11 +47,15 @@
                             <span v-if="props.data.flag === 9" class="h-tag h-tag-bg-red">删除</span>
                         </template>
                     </TableItem>
-                    <TableItem title="操作" :width="100" >
+                    <TableItem title="操作" :width="130" >
                         <template slot-scope="props">
                             <button class="h-btn h-btn-s h-btn-green" @click="edit(props.data)">
                                 编辑
                                 <i class="h-icon-edit"></i>
+                            </button>
+                            <button v-if="props.data.rgroup == 'site'" class="h-btn h-btn-s h-btn-yellow" >
+                                编辑规则
+                                <i class="h-icon-search"></i>
                             </button>
                             <button class="h-btn h-btn-s h-btn-red" >
                                 删除
@@ -65,22 +69,19 @@
                     <Pagination :cur="page.current" :size="page.size" :total="page.total" @change="currentChange" :small="true"></Pagination>
                 </div>
             </div>
-            <Modal v-model="modal.opened" width="600" >
-                <div slot="header">编辑</div>
+            <Modal v-model="modal.opened" >
+                <div slot="header" v-width="500">编辑</div>
                 <div >
                         <Form :label-width="90">
                           <FormItem label="地址">
                             <input type="text"  v-model="modal.resources" />
                           </FormItem>
                           <FormItem label="资源分组">
-                            <input type="text" v-model="modal.rgroup" />
-                          </FormItem>
-                          <FormItem label="资源类别">
-                            <Select v-model="modal.rtype" className="select-demo" :datas="modal.rtypes"></Select>
+                            <Select v-model="modal.rgroup" :datas="modal.rgroups"></Select>
                           </FormItem>
                         </Form>
                 </div>
-                <div slot="footer"><button class="h-btn" @click="cancel">取消</button><button class="h-btn h-btn-primary">确定</button></div>
+                <div slot="footer"><button class="h-btn" @click="cancel">取消</button><button class="h-btn h-btn-primary" @click="update">确定</button></div>
             </Modal>
         </div>
     </div>
@@ -120,16 +121,10 @@ export default {
         },
         modal: {
             opened: false,
+            id: "",
             resources: "",
             rgroup: "",
-            rtype: "",
-            rtypes: [{
-                key: 1,
-                title: 'java'
-            },{
-                key: 2,
-                title: 'php'
-            }]
+            rgroups: ["rss","site"]
         }
     }
   },
@@ -141,7 +136,6 @@ export default {
             pageSize: this.page.size
         }).then(res => {
             if (res.ok) {
-                console.log(res)
                 this.datas = res.result.data
                 this.page.total = res.result.page.total
                 this.$LoadingBar.success()
@@ -157,12 +151,30 @@ export default {
     },
     edit(line){
         this.modal.opened = true
+        this.modal.id = line.id
         this.modal.resources = line.resources
         this.modal.rgroup = line.rgroup
         this.modal.rtype = line.rtypeid
     },
     cancel(){
         this.modal.opened = false
+    },
+    update(){
+        this.$LoadingBar.start()
+        R.Resources.updateResources({
+            id: this.modal.id,
+            resources: this.modal.resources,
+            rgroup: this.modal.rgroup
+        }).then(res => {
+            if (res.ok) {
+                this.$Message.success("修改成功")
+                this.$LoadingBar.success()
+            }else{
+                this.$LoadingBar.fail()
+            }
+            this.modal.opened = false
+            this.search()
+        })
     }
   },
   mounted: function(){

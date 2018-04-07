@@ -8,7 +8,18 @@
 </style>
 <template>
   <div class="app-home" v-padding="20">
-      闲置空间
+    <Row>
+      <Col width="4">
+        <div class="h-panel">
+          <div class="h-panel-bar">
+            <span class="h-panel-title">昨日新增</span> 
+          </div>
+          <div class="h-panel-body" v-font="36">
+            <i class="h-icon-plus green-color">&nbsp;{{yesterdaynew}}</i>
+          </div>
+        </div>
+      </Col>
+    </Row>
   </div>
 </template>
 <script>
@@ -16,43 +27,15 @@
 export default {
   data() {
     return {
-      count: 0,
-      rescount: 0,
-      visitcount: 0
+      yesterdaynew: 0
     }
   },
   methods: {
-    getArticleCount(){
-      R.Home.articleCount().then(resp => {
+    getYesterdayAdd(){
+      R.Content.getYesterdayNew().then(resp => {
         if (resp.ok) {
           if(resp.code == 200){
-            this.count = resp.result.data
-          }else{
-            this.$Message(resp.message)
-          }
-        }else{
-          this.$Message("系统错误")
-        }
-      })
-    },
-    getResourcesCount(){
-      R.Home.resourcesCount().then(resp => {
-        if (resp.ok) {
-          if(resp.code == 200){
-            this.rescount = resp.result.data
-          }else{
-            this.$Message(resp.message)
-          }
-        }else{
-          this.$Message("系统错误")
-        }
-      })
-    },
-    getVisitCount(){
-      R.Home.visitCount().then(resp => {
-        if (resp.ok) {
-          if(resp.code == 200){
-            this.visitcount = resp.result.data
+            this.yesterdaynew = resp.result
           }else{
             this.$Message(resp.message)
           }
@@ -63,6 +46,7 @@ export default {
     }
   },
   mounted: function(){
+    this.getYesterdayAdd()
   }
 }
 </script>
