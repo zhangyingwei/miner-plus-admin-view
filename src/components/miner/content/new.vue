@@ -5,7 +5,16 @@
                 最新文章
             </div>
             <div class="h-panel-bar" v-padding="10">
-                新抓取的文章
+                <Form mode="inline" v-padding="5">
+                    <FormItem label="发布时间" v-padding="5" >
+                        <div class="h-input">
+                            <input type="text"/>
+                        </div>
+                    </FormItem>
+                    <FormItem v-padding="5" >
+                        <Button color="primary" >查询</Button>
+                    </FormItem>
+                </Form>
             </div>
             <div class="h-panel-body">
                 <Table :datas="datas">
@@ -34,8 +43,11 @@
                             <Tooltip theme="white" placement="right">
                                 <span v-if="props.data.description && props.data.description.length<=20" class="text-hover desc-text">{{props.data.description}}</span>
                                 <span v-if="props.data.description && props.data.description.length>20" class="text-hover desc-text">{{props.data.description.substr(0,20)}}...</span>
-                                <div slot="content">
+                                <div slot="content" v-if="props.data.description && props.data.description.length<=200" >
                                     {{props.data.description}}
+                                </div>
+                                <div slot="content" v-if="props.data.description && props.data.description.length>200" >
+                                    {{props.data.description.substr(0,200)}}...
                                 </div>
                             </Tooltip>
                         </template>

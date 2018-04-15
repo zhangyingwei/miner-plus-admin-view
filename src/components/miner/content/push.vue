@@ -223,6 +223,7 @@ export default {
                                 count: line.count,
                                 pushdate: '未分配'       
                             }
+                            console.log(line)
                         }
                         return result
                     }).map(line => {

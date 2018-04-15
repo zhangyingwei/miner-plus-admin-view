@@ -53,7 +53,9 @@ const initRouter = () => {
         // }
         // console.log(to.path)
         var user = Utils.getLocal("loginuser")
-            console.log("user", user)
+        var token = Utils.getLocal("miner-token")
+        console.log("user", user)
+        console.log("token",token)
         if (!user) {
             if (to.path === "/admin/login") {
                 next()
