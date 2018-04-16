@@ -37,7 +37,7 @@
                 <Modal v-model="confirm.open">
                     <div slot="header">添加标签</div>
                     <div >
-                        <input type="text" v-width="400" placeholder="请输入标签" v-model="confirm.tag"/>
+                        <input type="text" v-focus @keyup.enter="sureAddOne" v-width="400" placeholder="请输入标签" v-model="confirm.tag"/>
                     </div>
                     <div slot="footer"><button class="h-btn" @click="confirm.open = false">取消</button><button class="h-btn h-btn-primary" @click="sureAddOne" >确定</button></div>
                 </Modal>
@@ -132,6 +132,7 @@ export default {
         R.Tags.deleteOne(line.topic).then(res => {
             if (res.ok) {
                 this.$LoadingBar.success()
+              console.log(res)
             }else{
                 this.$LoadingBar.fail()
             }
@@ -142,6 +143,14 @@ export default {
   mounted: function(){
       this.token = Utils.getLocal("token")
       this.search()
+  },
+  directives: {
+    focus: {
+      // 指令的定义
+      inserted: function (el) {
+        el.focus()
+      }
+    }
   }
 }
 </script>

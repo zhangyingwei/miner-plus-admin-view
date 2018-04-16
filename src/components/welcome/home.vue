@@ -20,6 +20,7 @@
         </div>
       </Col>
     </Row>
+    <Loading text="加载中..." :loading="loading"></Loading>
   </div>
 </template>
 <script>
@@ -27,11 +28,13 @@
 export default {
   data() {
     return {
-      yesterdaynew: 0
+      yesterdaynew: 0,
+      loading: false
     }
   },
   methods: {
     getYesterdayAdd(){
+      this.loading = true
       R.Content.getYesterdayNew().then(resp => {
         if (resp.ok) {
           if(resp.code == 200){
@@ -42,6 +45,7 @@ export default {
         }else{
           this.$Message("系统错误")
         }
+        this.loading = false
       })
     }
   },
